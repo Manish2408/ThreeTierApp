@@ -1,0 +1,151 @@
+ 1  sudo apt update
+    2  git clone https://github.com/Manish2408/TWSThreeTierAppChallenge.git
+    3  ls
+    4  cd
+    5  cd TWSThreeTierAppChallenge/
+    6  ls
+    7  cd backend/
+    8  cd ..
+    9  cd frontend/
+   10  ls
+   11  rm -rf Dockerfile
+   12  ls
+   13  cat package
+   14  cat package.json
+   15  vim Dockerfile
+   16  docker
+   17  sudo apt-get install docker.io
+   18  docker ps
+   19  sudo chown $USER /var/run/docker.sock
+   20  docker ps
+   21  docker build -t threetier-frontend .
+   22  docker image
+   23  docker image ls
+   24  docker run -d -p 3000:3000 threetier-frontend:latest
+   25  docker ps
+   26  docker kill 109
+   27  docker ps
+   28  cd /home/
+   29  ls
+   30  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   31  ls
+   32  sudo apt install unzip
+   33  unzip awscliv2.zip
+   34  cd
+   35  ls
+   36  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   37  sudo apt install unzip
+   38  unzip awscliv2.zip
+   39  sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin --update
+   40  aws configure
+   41  aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l4k1p2n0
+   42  docker build -t three-tier-frontend .
+   43  cd TWSThreeTierAppChallenge/
+   44  cd frontend/
+   45  docker build -t three-tier-frontend .
+   46  docker image ls
+   47  docker tag three-tier-frontend:latest public.ecr.aws/l4k1p2n0/three-tier-frontend:latest
+   48  docker push public.ecr.aws/l4k1p2n0/three-tier-frontend:latest
+   49  cd ..
+   50  cd backend/
+   51  ls Dockerfile
+   52  cat Dockerfile
+   53  cd ..
+   54  cd frontend/
+   55  ls
+   56  cat Dockerfile
+   57  cd ..
+   58  cd backend/
+   59  ls
+   60  cat Dockerfile
+   61  rm -rf Dockerfile
+   62  ls
+   63  vim Dockerfile
+   64  aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l4k1p2n0
+   65  docker build -t three-tier-backend .
+   66  docker tag three-tier-backend:latest public.ecr.aws/l4k1p2n0/three-tier-backend:latest
+   67  docker push public.ecr.aws/l4k1p2n0/three-tier-backend:latest
+   68  docker build -t -p 8000:8000 three-tier-backend:latest
+   69  docker build -d -p 8000:8000 three-tier-backend:latest
+   70  docker run -d -p 8000:8000 three-tier-backend:latest
+   71  docker ps
+   72  docker logs 6fc
+   73  docker image ls
+   74  docker rmi 53e70091513d
+   75  docker rmi threetier-frontend
+   76  docker image ls
+   77  cd
+   78  curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+   79  chmod +x ./kubectl
+   80  sudo mv ./kubectl /usr/local/bin
+   81  kubectl version --short --client
+   82  curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+   83  sudo mv /tmp/eksctl /usr/local/bin
+   84  eksctl version
+   85  sudo apt update
+   86  eksctl create cluster --name three-tier-cluster --region us-west-2 --node-type t2.medium --nodes-min 2 --nodes-max 2
+   87  kubectl get nodes
+   88  aws eks update-kubeconfig --region us-west-2 --name three-tier-cluster
+   89  kubectl get nodes
+   90  ls
+   91  cd TWSThreeTierAppChallenge/
+   92  ls
+   93  cd k8s_manifests/
+   94  ls
+   95  cd mongo/
+   96  ls
+   97  cat deploy.yaml
+   98  ls
+   99  clear
+  100  ls
+  101  kubectl apply -f deploy.yaml
+  102  kubectl create namespace workshop
+  103  kubectl apply -f deploy.yaml
+  104  kubectl get deployment -n workshop
+  105  kubectl apply -f secrets.yaml
+  106  kubectl get deployment -n workshop
+  107  kubectl get pods -n workshop
+  108  ls
+  109  kubectl apply -f service.yaml
+  110  kubectl get svc -n workshop
+  111  cd ..
+  112  ls
+  113  vim backend-deployment.yaml
+  114  vim backend-service.yaml
+  115  kubectl apply -f backend-deployment.yaml
+  116  kubectl apply -f backend-service.yaml
+  117  kubectl get pods -n workshop
+  118  kubectl get logs api-54d94d6858-xvbm6 -n workshop
+  119  kubectl logs api-54d94d6858-xvbm6 -n workshop
+  120  ls
+  121  vim frontend-deployment.yaml
+  122  vim frontend-service.yaml
+  123  kubectl apply -f frontend-deployment.yaml
+  124  kubectl apply -f frontend-service.yaml
+  125  kubectl get pods -n workshop
+  126  cd
+  127  curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
+  128  aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicyForEKS --policy-document file://iam_policy.json
+  129  eksctl utils associate-iam-oidc-provider --region=us-west-2 --cluster=three-tier-cluster --approve
+  130  eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::626072240565:policy/AWSLoadBalancerControllerIAMPolicy --approve --region=us-west-2
+  131  eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRoleForEKS --attach-policy-arn=arn:aws:iam::339713033115:policy/AWSLoadBalancerControllerIAMPolicyForEKS --approve --region=us-west-2
+  132  eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRoleForEKS --attach-policy-arn=arn:aws:iam::339713033115:policy/AWSLoadBalancerControllerIAMPolicyForEKS --approve --region=us-west-2 --override-existing-serviceaccounts
+  133  eksctl delete iamserviceaccount   --cluster=three-tier-cluster   --namespace=kube-system   --name=aws-load-balancer-controller   --region=us-west-2
+  134  eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRoleForEKS --attach-policy-arn=arn:aws:iam::339713033115:policy/AWSLoadBalancerControllerIAMPolicyForEKS --approve --region=us-west-2 --override-existing-serviceaccounts
+  135  sudo snap install helm --classic
+  136  helm repo add eks https://aws.github.io/eks-charts
+  137  helm repo update eks
+  138  helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=three-tier-cluster --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+  139  kubectl get deployment -n kube-system aws-load-balancer-controller
+  140  cd TWSThreeTierAppChallenge/
+  141  ls
+  142  cd k8s_manifests/
+  143  ls
+  144  vim full_stack_lb.yaml
+  145  kubectl apply -f full_stack_lb.yaml
+  146  kubectl get ing -n workshop
+  147  kubectl get pods -n workshop
+  148  kubectl exec -it my-pod --container main-app -- /bin/bash
+  149  kubectl exec -it mongodb-797968fbc5-dvcrd -n workshop -- /bin/bash
+  150  kubectl exec -it mongodb-797968fbc5-dvcrd -n workshop -- /bin/sh
+  151  kubectl exec -it mongodb-797968fbc5-dvcrd -n workshop -- /bin/bash
